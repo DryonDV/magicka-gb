@@ -1,0 +1,329 @@
+AREA .  .ABS.
+	RADIX HEX
+	BASE 0000
+	SIZE 0000
+	ATTRIB ABS OVR
+	GLOBALS
+		l__HEAP	0000
+		l__BSEG	0000
+		l_.  .ABS.	0000
+		l__GSFINAL	0000
+		l__ISEG	0000
+		s_.  .ABS.	0000
+		l__HOME	0000
+		s__HEADER	0000
+		l__XSEG	0000
+		.init	0000
+		l__OVERLAY	0000
+		l__LIT	0000
+		l__GSINITTAIL	0001
+		l__BSS	0058
+		l__HEADER	01E1
+		s__CODE	0200
+		l__DATA	06FB
+		l__CODE	26F2
+		s__HOME	28F2
+		s__LIT	28F2
+		s__GSINIT	28F2
+		l__GSINIT	2900
+		s__GSINITTAIL	51F2
+		s__GSFINAL	51F3
+		.OAM	C000
+		s__DATA	C0A0
+		s__BSS	C79B
+		s__HEAP	C7F3
+		s__BSEG	C7F3
+		s__ISEG	C7F3
+		s__XSEG	C7F3
+		s__OVERLAY	C7F3
+		.STACK	E000
+		.refresh_OAM	FF80
+AREA _CODE
+	RADIX HEX
+	BASE 0200
+	SIZE 26F2
+	ATTRIB REL CON
+	GLOBALS
+		.set_mode	0200
+		.remove_VBL	0210
+		.remove_LCD	0216
+		.remove_TIM	021C
+		.remove_SIO	0222
+		.remove_JOY	0228
+		.add_VBL	022E
+		.add_LCD	0234
+		.add_TIM	023A
+		.add_SIO	0240
+		.add_JOY	0246
+		.remove_int	024C
+		.add_int	026C
+		.wait_vbl_done	0288
+		_wait_vbl_done	0288
+		_display_off	0299
+		.display_off	0299
+		.serial_IO	02BA
+		_mode	02E9
+		_get_mode	02F2
+		_enable_interrupts	02F7
+		_disable_interrupts	02F9
+		_reset	02FB
+		.reset	02FB
+		_set_interrupts	0301
+		_remove_VBL	030C
+		_remove_LCD	0317
+		_remove_TIM	0322
+		_remove_SIO	032D
+		_remove_JOY	0338
+		_add_VBL	0343
+		_add_LCD	034E
+		_add_TIM	0359
+		_add_SIO	0364
+		_add_JOY	036F
+		_clock	037A
+		__printTStates	0383
+		_main	0384
+		_assigntiles	0399
+		_init	03D3
+		_updateSwitches	057F
+		_lifeposition	05C6
+		_walkanim	06FB
+		_checkInput	07CE
+		_testworldtiles	13DC
+		_testworldtiles_bw	158C
+		_testworldtilesmap	173C
+		_testworld	1B3C
+		_testworldpalettemap	1F3C
+		_spritetoassign	233C
+		_tilesnb	234B
+		_set_bkg_palette	234E
+		_set_sprite_palette	2379
+		_set_bkg_palette_entry	23A4
+		_set_sprite_palette_entry	23CC
+		_cpu_slow	23F4
+		_cpu_fast	240F
+		_cgb_compatibility	2416
+		.set_sprite_prop	245F
+		_set_sprite_prop	246C
+		_scroll_bkg	2477
+		_move_win	248D
+		.padup	2496
+		_waitpadup	2496
+		.jpad	24A6
+		.wait_pad	24D3
+		_joypad	24DA
+		_waitpad	24DF
+		.mv_sprite	24E9
+		_move_sprite	24F8
+		_get_win_tiles	2505
+		_get_win_data	2519
+		_get_bkg_data	2519
+		_get_sprite_data	2566
+		_set_win_data	2596
+		_set_bkg_data	2596
+		_set_sprite_data	25E3
+		_send_byte	2612
+		_receive_byte	2625
+		.copy_vram	2636
+		_get_data	2645
+		_set_data	2645
+		_set_win_tiles	2658
+		_scroll_win	266C
+		.get_xy_wtt	2682
+		.get_xy_btt	2694
+		.get_xy_tt	26A3
+		_get_tiles	26D4
+		.get_sprite_tile	26ED
+		_get_sprite_tile	26FA
+		.scroll_sprite	2703
+		_scroll_sprite	2714
+		_move_bkg	2721
+		.set_xy_wtt	272A
+		.set_xy_btt	273B
+		.set_xy_tt	274A
+		_set_tiles	277B
+		.set_sprite_tile	2794
+		_set_sprite_tile	27A1
+		.delay	27AC
+		_delay	27E6
+		_get_bkg_tiles	27EF
+		.get_sprite_prop	2803
+		_get_sprite_prop	2810
+		.sgb_check	2819
+		_sgb_check	2819
+		.sgb_transfer	2866
+		.hiramcpy	28C7
+		_hiramcpy	28CE
+		_set_bkg_tiles	28DE
+AREA _HEADER
+	RADIX HEX
+	BASE 0000
+	SIZE 01E1
+	ATTRIB ABS OVR
+	GLOBALS
+		_exit	01D1
+AREA _HOME
+	RADIX HEX
+	BASE 28F2
+	SIZE 0000
+	ATTRIB REL CON
+AREA _LIT
+	RADIX HEX
+	BASE 28F2
+	SIZE 0000
+	ATTRIB REL CON
+AREA _GSINIT
+	RADIX HEX
+	BASE 28F2
+	SIZE 2900
+	ATTRIB REL CON
+	GLOBALS
+		gsinit	28F2
+AREA _GSINITTAIL
+	RADIX HEX
+	BASE 51F2
+	SIZE 0001
+	ATTRIB REL CON
+AREA _GSFINAL
+	RADIX HEX
+	BASE 51F3
+	SIZE 0000
+	ATTRIB REL CON
+AREA _DATA
+	RADIX HEX
+	BASE C0A0
+	SIZE 06FB
+	ATTRIB REL CON
+	GLOBALS
+		_alpha	C0A0
+		_blankScreen	C3B0
+		_sprites	C518
+		_magicka_player	C528
+		_interface_tiles	C648
+		_player_pos	C718
+		_player_tiles_left	C71A
+		_player_tiles_right	C71C
+		_playerWalking	C71E
+		_playerWalkingTimer	C71F
+		_playerWalkingState	C720
+		_spr	C721
+		_oldleft	C722
+		_oldright	C724
+		_playerFlipped	C726
+		_lifebar_pos	C727
+		_tiletoassign	C729
+		_placetoassign	C72A
+		_testworld_palette_bw	C72B
+		_testworld_palette	C753
+		_interface_palette	C77B
+		_magicka_player_palette	C783
+AREA _BSS
+	RADIX HEX
+	BASE C79B
+	SIZE 0058
+	ATTRIB REL CON
+	GLOBALS
+		__cpu	C79B
+		.mode	C79C
+		__io_out	C79D
+		__io_in	C79E
+		__io_status	C79F
+		.vbl_done	C7A0
+		_sys_time	C7A1
+		.sys_time	C7A1
+		.int_0x40	C7A3
+		.int_0x48	C7B3
+		.int_0x50	C7C3
+		.int_0x58	C7D3
+		.int_0x60	C7E3
+AREA _HEAP
+	RADIX HEX
+	BASE C7F3
+	SIZE 0000
+	ATTRIB REL CON
+	GLOBALS
+		_malloc_heap_start	C7F3
+AREA _OVERLAY
+	RADIX HEX
+	BASE C7F3
+	SIZE 0000
+	ATTRIB REL CON
+AREA _ISEG
+	RADIX HEX
+	BASE C7F3
+	SIZE 0000
+	ATTRIB REL CON
+AREA _BSEG
+	RADIX HEX
+	BASE C7F3
+	SIZE 0000
+	ATTRIB REL CON
+AREA _XSEG
+	RADIX HEX
+	BASE C7F3
+	SIZE 0000
+	ATTRIB REL CON
+MODULES
+	FILE C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/crt0.o
+		NAME Runtime
+	FILE main.o
+		NAME lcc143600
+LIBRARIES
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE cgb.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE set_prop.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE scroll_b.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE mv_win.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE pad.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE mv_spr.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE get_wi_t.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE get_data.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE set_data.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE serial.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE cpy_data.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE set_wi_t.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE scroll_w.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE get_xy_t.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE get_spr.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE scroll_s.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE mv_bkg.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE set_xy_t.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE set_spr.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE delay.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE get_bk_t.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE get_prop.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE sgb.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE hiramcpy.o
+	LIBRARY C:\Users\Guillaume\Downloads\GameBoy\gbdk\lib/gb/gb.lib
+		MODULE set_bk_t.o
+USERBASEDEF
+	_CODE=0x0200
+	_DATA=0xC0A0
+	_CODE_1=0x4000
+USERGLOBALDEF
+	.OAM=0xC000
+	.STACK=0xE000
+	.refresh_OAM=0xFF80
+	.init=0x0000
