@@ -24,6 +24,7 @@ void updateSwitches();
 void walkanim();
 void lifeposition();
 void assignsprite();
+void assignpalette();
 
 UINT8 player_pos[2];
 UINT8 player_tiles_left[2];
@@ -120,7 +121,24 @@ void main() {
 }
 
 
-
+void assignpalette() {
+	if (spritenb == 0) {
+		
+		set_sprite_prop(0,0);
+		set_sprite_prop(1,2);
+		set_sprite_prop(2,1);
+		set_sprite_prop(3,1);
+		set_sprite_prop(5,2);
+		set_sprite_prop(6,1);
+		set_sprite_prop(9,2);
+		set_sprite_prop(10,1);
+		set_sprite_prop(11,0);
+		set_sprite_prop(12,3);
+		set_sprite_prop(13,3);
+	}
+}
+	
+	
 void assignsprite() {
 		
 	set_sprite_data(spriteorder, tilescount[spritenb], spritereference[spritenb]);
@@ -135,6 +153,8 @@ void assignsprite() {
 	}
 	
 	set_sprite_palette(paletteorder,palettecount[spritenb],palettereference[spritenb]);
+	assignpalette();
+	
 }
 
 void init() {
@@ -173,17 +193,7 @@ void init() {
 	player_tiles_left[0] = 0;
 	player_tiles_left[1] = 2;
 	
-	set_sprite_prop(0,0);
-	set_sprite_prop(1,2);
-	set_sprite_prop(2,1);
-	set_sprite_prop(3,1);
-	set_sprite_prop(5,2);
-	set_sprite_prop(6,1);
-	set_sprite_prop(9,2);
-	set_sprite_prop(10,1);
-	set_sprite_prop(11,0);
-	set_sprite_prop(12,3);
-	set_sprite_prop(13,3);
+
 
 
 	
