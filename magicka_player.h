@@ -66,7 +66,7 @@
 #define magicka_playerCGBPal2c0 32767
 #define magicka_playerCGBPal2c1 3871
 #define magicka_playerCGBPal2c2 28
-#define magicka_playerCGBPal2c3 31639
+#define magicka_playerCGBPal2c3 32527
 
 /* Gameboy Color palette 3 */
 #define magicka_playerCGBPal3c0 6076
@@ -118,6 +118,5 @@
 #define magicka_playerCGB16 0
 #define magicka_playerCGB17 0
 /* Start of tile array. */
-
 
 /* End of MAGICKA_PLAYER.H */

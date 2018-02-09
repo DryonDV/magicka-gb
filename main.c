@@ -23,7 +23,7 @@ void checkInput();
 void updateSwitches();
 void walkanim();
 void lifeposition();
-void assigntiles();
+void assignsprite();
 
 UINT8 player_pos[2];
 UINT8 player_tiles_left[2];
@@ -37,8 +37,10 @@ UINT8 oldright[2];
 UINT8 playerFlipped;
 UINT8 lifebar_pos[2];
 UINT8 tiletoassign;
-UINT8 placetoassign;
-
+UINT8 tileorder;
+UINT8 spritenb;
+UINT8 spriteorder;
+UINT8 paletteorder;
 
 
 UWORD testworld_palette_bw[] = {
@@ -119,18 +121,26 @@ void main() {
 
 
 
-void assigntiles() {
-	for (tiletoassign = 0; placetoassign < tilesnb[0]; placetoassign ++) {
+void assignsprite() {
 		
-		set_sprite_tile(placetoassign,tiletoassign,spritetoassign[0]);
+	set_sprite_data(spriteorder, tilescount[spritenb], spritereference[spritenb]);
+	
+	spriteorder = spriteorder+tilescount[spritenb];
+
+	
+	for (tiletoassign = 0; tileorder < tilescount[spritenb]; tileorder ++) {
 		
+		set_sprite_tile(tileorder,tiletoassign);
 		tiletoassign++;
 	}
+	
+	set_sprite_palette(paletteorder,palettecount[spritenb],palettereference[spritenb]);
 }
 
 void init() {
-	placetoassign = 0;
-	// tiletoassign = 0;
+	spriteorder = 0;
+	tileorder = 0;
+	paletteorder = 0;
 	player_pos[0] = 30;
 	player_pos[1] = 50;
 	lifebar_pos[0] = 20;
@@ -138,7 +148,7 @@ void init() {
 	playerWalking = 0;
 	playerWalkingTimer = 0;
 	playerWalkingState = 0;
-	
+	spritenb = 1;
 	spr = 0;
 	oldleft[0] = 0;
 	oldright[0] = 1;
@@ -146,7 +156,6 @@ void init() {
 	oldright[1] = 3;
 	playerFlipped = 0;
 	DISPLAY_ON;		// Turn on the display
-	
 	SPRITES_8x8;
 	
 	
@@ -157,57 +166,13 @@ void init() {
 	set_bkg_tiles(0,0,32,32,testworldpalettemap);
 	VBK_REG=0;
 	set_bkg_tiles(0,0,32,32,testworldtilesmap);
-	// VBK_REG=0;
 	
-	set_sprite_palette(0,3, &magicka_player_palette[0]); //n° palette to stock on, nb of palettes to load
-	set_sprite_data(0,18,magicka_player);
-	
-	
-	
-	// set_sprite_palette(3,1,&interface_palette[0]);
-	// set_sprite_data(12,14,interface_tiles);
-	
+
 	player_tiles_right[0] = 1;
 	player_tiles_right[1] = 3;
 	player_tiles_left[0] = 0;
 	player_tiles_left[1] = 2;
-
 	
-	// spritetoassign = magicka_player;
-	
-	
-	// set_sprite_tile(0,0,magicka_player);  //assign a loaded tile to a sprite move(list) slot
-	// set_sprite_tile(1,1,magicka_player);
-	// set_sprite_tile(2,2,magicka_player);
-	// set_sprite_tile(3,3,magicka_player);
-	// set_sprite_tile(4,4,magicka_player);
-	// set_sprite_tile(5,5,magicka_player);
-	// set_sprite_tile(6,6,magicka_player);
-	// set_sprite_tile(7,7,magicka_player);
-	// set_sprite_tile(8,8,magicka_player);
-	// set_sprite_tile(9,9,magicka_player);
-	// set_sprite_tile(10,10,magicka_player);
-	// set_sprite_tile(11,11,magicka_player);
-	
-
-	
-	// set_sprite_tile(12,12,interface_tiles);
-	// set_sprite_tile(13,13,interface_tiles);
-	// set_sprite_tile(14,14,interface_tiles);
-	// set_sprite_tile(15,15,interface_tiles);
-	// set_sprite_tile(16,16,interface_tiles);
-	// set_sprite_tile(17,17,interface_tiles);
-	// set_sprite_tile(18,18,interface_tiles);
-	// set_sprite_tile(19,19,interface_tiles);
-	// set_sprite_tile(20,20,interface_tiles);
-	// set_sprite_tile(21,21,interface_tiles);
-	// set_sprite_tile(22,22,interface_tiles);
-	// set_sprite_tile(23,23,interface_tiles);
-	// set_sprite_tile(24,24,interface_tiles);
-	
-	
-
-
 	set_sprite_prop(0,0);
 	set_sprite_prop(1,2);
 	set_sprite_prop(2,1);
@@ -219,21 +184,15 @@ void init() {
 	set_sprite_prop(11,0);
 	set_sprite_prop(12,3);
 	set_sprite_prop(13,3);
-	
-	// set_bkg_palette(0,1,&testworld_palette[0]);
-	// set_bkg_palette(1,1,&testworld_palette[1]);
-	// set_bkg_palette(2,1,&testworld_palette[2]);
-	// set_bkg_palette(3,1,&testworld_palette[3]);
-	// set_bkg_palette(4,1,&testworld_palette[4]);
-	
+
+
 	
 	//NR52_REG = 0x8F;	// Turn on the sound
 	//NR51_REG = 0x11;	// Enable the sound channels
 	//NR50_REG = 0x77;	// Increase the volume to its max
 	
-	// move_sprite(12,player_pos[0],player_pos[1]+16);
-	// move_sprite(13,player_pos[0]+8,player_pos[1]+16);
-	assigntiles();
+	
+	assignsprite(spritenb = 0);
 }
 void updateSwitches() {
 		HIDE_WIN;
