@@ -16,6 +16,8 @@
 #include "testworldpalettemap.c"
 #include "testworldpalettemap_bw.c"
 #include "spritelist.c"
+#include "elements.c"
+#include "elements.h"
 
 
 void init();
@@ -25,6 +27,8 @@ void walkanim();
 void lifeposition();
 void assignsprite();
 void assignpalette();
+void isitloaded();
+void elementsmenu();
 
 UINT8 player_pos[2];
 UINT8 player_tiles_left[2];
@@ -35,13 +39,18 @@ UINT8 playerWalkingState;
 UINT8 spr;
 UINT8 oldleft[2];
 UINT8 oldright[2];
+UINT8 oldup[2];
 UINT8 playerFlipped;
 UINT8 lifebar_pos[2];
+UINT8 movelistorderstart;
+UINT8 movelistordercurrent;
 UINT8 tiletoassign;
-UINT8 tileorder;
+
 UINT8 spritenb;
 UINT8 spriteorder;
 UINT8 paletteorder;
+UINT8 magicka_player_loaded;
+UINT8 player_move_allowed;
 
 
 UWORD testworld_palette_bw[] = {
@@ -100,8 +109,12 @@ UWORD magicka_player_palette[] = {
 	
 };
 
+UWORD elements_palette[] = {
+	//fire
+	 elementsCGBPal0c0,elementsCGBPal0c1,elementsCGBPal0c2,elementsCGBPal0c3
+};
 
-
+	 
 void main() {
 
 	init();
@@ -120,6 +133,12 @@ void main() {
 	
 }
 
+void isitloaded() {
+	if (spritenb == 0) {
+		magicka_player_loaded = 1;
+	}
+}
+
 
 void assignpalette() {
 	if (spritenb == 0) {
@@ -132,34 +151,62 @@ void assignpalette() {
 		set_sprite_prop(6,1);
 		set_sprite_prop(9,2);
 		set_sprite_prop(10,1);
-		set_sprite_prop(11,0);
-		set_sprite_prop(12,3);
-		set_sprite_prop(13,3);
+		set_sprite_prop(13,2);
+		set_sprite_prop(14,1);
+		set_sprite_prop(15,1);
 	}
+	else if (spritenb == 1) {
+		set_sprite_prop(18,3);
+		set_sprite_prop(19,3);
+		set_sprite_prop(20,3);
+		set_sprite_prop(21,3);
+		set_sprite_prop(22,3);
+		set_sprite_prop(23,3);
+		set_sprite_prop(24,3);
+		set_sprite_prop(25,3);
+		set_sprite_prop(26,3);
+		set_sprite_prop(27,3);
+		set_sprite_prop(28,3);
+		set_sprite_prop(29,3);
+		set_sprite_prop(30,3);
+	}
+	else if (spritenb == 2) {
+		set_sprite_prop(31,4);
+		set_sprite_prop(32,4);
+		set_sprite_prop(33,4);
+		set_sprite_prop(34,4);
+		}
+		
 }
-	
-	
+		
 void assignsprite() {
 		
 	set_sprite_data(spriteorder, tilescount[spritenb], spritereference[spritenb]);
 	
 	spriteorder = spriteorder+tilescount[spritenb];
 
+	//tilesheet -> VRAM 
+	//VRAM -> sprite list
 	
-	for (tiletoassign = 0; tileorder < tilescount[spritenb]; tileorder ++) {
-		
-		set_sprite_tile(tileorder,tiletoassign);
+	while (tiletoassign < movelistorderstart+tilescount[spritenb]) {
+		set_sprite_tile(movelistordercurrent,tiletoassign);
+		movelistordercurrent++;
 		tiletoassign++;
 	}
+	movelistorderstart = movelistordercurrent;
 	
 	set_sprite_palette(paletteorder,palettecount[spritenb],palettereference[spritenb]);
+	paletteorder = paletteorder+palettecount[spritenb];
+	
 	assignpalette();
+	isitloaded();
 	
 }
 
 void init() {
+	movelistorderstart = 0;
+	player_move_allowed = 1;
 	spriteorder = 0;
-	tileorder = 0;
 	paletteorder = 0;
 	player_pos[0] = 30;
 	player_pos[1] = 50;
@@ -168,7 +215,6 @@ void init() {
 	playerWalking = 0;
 	playerWalkingTimer = 0;
 	playerWalkingState = 0;
-	spritenb = 1;
 	spr = 0;
 	oldleft[0] = 0;
 	oldright[0] = 1;
@@ -177,7 +223,10 @@ void init() {
 	playerFlipped = 0;
 	DISPLAY_ON;		// Turn on the display
 	SPRITES_8x8;
-	
+	player_tiles_right[0] = 1;
+	player_tiles_right[1] = 3;
+	player_tiles_left[0] = 0;
+	player_tiles_left[1] = 2;
 	
 	set_bkg_palette(0,5,&testworld_palette[0]);
 	set_bkg_data(0,28,testworldtiles);
@@ -188,10 +237,7 @@ void init() {
 	set_bkg_tiles(0,0,32,32,testworldtilesmap);
 	
 
-	player_tiles_right[0] = 1;
-	player_tiles_right[1] = 3;
-	player_tiles_left[0] = 0;
-	player_tiles_left[1] = 2;
+
 	
 
 
@@ -202,7 +248,10 @@ void init() {
 	//NR50_REG = 0x77;	// Increase the volume to its max
 	
 	
-	assignsprite(spritenb = 0);
+	assignsprite(spritenb=0);
+	assignsprite(spritenb=1);
+	assignsprite(spritenb=2);
+	// lifeposition();
 }
 void updateSwitches() {
 		HIDE_WIN;
@@ -210,26 +259,28 @@ void updateSwitches() {
 		SHOW_BKG;
 }
 
+void elementsmenu() {
+}
 
 void lifeposition() {
 	if (playerWalking == 0) {
 		if (playerFlipped == 0) {
-		move_sprite(12,player_pos[0]-2,player_pos[1]+17);
-		move_sprite(13,player_pos[0]+5,player_pos[1]+17);
+		move_sprite(18,player_pos[0]-2,player_pos[1]+17);
+		move_sprite(19,player_pos[0]+5,player_pos[1]+17);
 		}
 		if (playerFlipped == 1) {
-		move_sprite(12,player_pos[0]-5,player_pos[1]+17);
-		move_sprite(13,player_pos[0]+2,player_pos[1]+17);
+		move_sprite(19,player_pos[0]-5,player_pos[1]+17);
+		move_sprite(20,player_pos[0]+2,player_pos[1]+17);
 		}
 	}
 	if (playerWalking == 1) {
 		if (playerFlipped == 0) {
-		move_sprite(12,player_pos[0]-4,player_pos[1]+17);
-		move_sprite(13,player_pos[0]+3,player_pos[1]+17);
+		move_sprite(19,player_pos[0]-4,player_pos[1]+17);
+		move_sprite(20,player_pos[0]+3,player_pos[1]+17);
 		}
 		if (playerFlipped == 1) {
-		move_sprite(12,player_pos[0]-3,player_pos[1]+17);
-		move_sprite(13,player_pos[0]+4,player_pos[1]+17);
+		move_sprite(19,player_pos[0]-3,player_pos[1]+17);
+		move_sprite(20,player_pos[0]+4,player_pos[1]+17);
 		}
 	}
 }
@@ -279,207 +330,213 @@ void walkanim() {
 	
 void checkInput() {
 
-    if (joypad() & J_B) {
+    if ((joypad() & J_B) && (player_move_allowed == 1)) {
+		player_move_allowed = 0;
 		set_bkg_palette(0,5,&testworld_palette_bw[0]);
-		// set_bkg_tiles(0,0,20,18,blankScreen);
-	}	// The B button was pressed!
-	if(joypad() & J_A) {
+		move_sprite(34,50,50);
+	}	
+	
+	
+	
+	
+	if((joypad() & J_A) ) {
+		player_move_allowed = 1;
 		set_bkg_palette(0,5,&testworld_palette[0]);
-		// set_bkg_tiles(6,7,7,2,helloworld);
-		// The A button was pressed!
-		
 		
     }
 	
-	// UP
-	if (joypad() & J_UP) {
+	if ((magicka_player_loaded == 1) && (player_move_allowed == 1)) {
 		
-		
-		if (player_pos[1] == 30) {
-			scroll_bkg(0,-1);
-		}
-		
-		if (player_pos[1] != 30) {
-			player_pos[1]--;
-		}
-
-		
-		move_sprite(oldleft[0],200,200);
-		move_sprite(oldleft[1],200,200);
-		move_sprite(oldright[0],200,200);
-		move_sprite(oldright[1],200,200);
-		
-		if (playerFlipped == 0) {
-			move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
-			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
-			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
-			move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
+		// UP
+		if (joypad() & J_UP) {
 			
-			set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
-		}
-		if (playerFlipped == 1) {
-			move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
-			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
-			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
-			move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
 			
-			set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) | S_FLIPX);
-			set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
-			set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) | S_FLIPX);
-			set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) | S_FLIPX);
-		}
-		
-		
-		
-		oldleft[0] = player_tiles_left[0];
-		oldleft[1] = player_tiles_left[1];
-		oldright[0] = player_tiles_right[0];
-		oldright[1] = player_tiles_right[1];
-		
-		playerWalking = 1;
-	}
-
-	// DOWN
-	if (joypad() & J_DOWN) {
-		
-		if (player_pos[1] != 134) {
-			player_pos[1]++;
-		}
-		if (player_pos[1] == 134) {
-			scroll_bkg(0,1);
-		}
-		
-		move_sprite(oldleft[0],200,200);
-		move_sprite(oldleft[1],200,200);
-		move_sprite(oldright[0],200,200);
-		move_sprite(oldright[1],200,200);
-		
-		if (playerFlipped == 0) {
-			move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
-			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
-			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
-			move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
+			if (player_pos[1] == 30) {
+				scroll_bkg(0,-1);
+			}
 			
-			set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
-		}
-		if (playerFlipped == 1) {
-			move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
-			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
-			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
-			move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
+			if (player_pos[1] != 30) {
+				player_pos[1]--;
+			}
+
 			
-			set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) | S_FLIPX);
-			set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
-			set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) | S_FLIPX);
-			set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) | S_FLIPX);
-		}
-		
-		
-		
-		oldleft[0] = player_tiles_left[0];
-		oldleft[1] = player_tiles_left[1];
-		oldright[0] = player_tiles_right[0];
-		oldright[1] = player_tiles_right[1];
-		
-		
-		playerWalking = 1;
-		
-	}
-
-	// LEFT
-	if (joypad() & J_LEFT)  {
-		
-		if (player_pos[0] != 70) {
-			player_pos[0]--;
-		}
-		if (player_pos[0] == 70) {
-			scroll_bkg(-1,0);
-		}
-		
-		
-
-		move_sprite(oldleft[0],200,200);
-		move_sprite(oldleft[1],200,200);
-		move_sprite(oldright[0],200,200);
-		move_sprite(oldright[1],200,200);
-		
-		set_sprite_prop(player_tiles_right[0],get_sprite_prop(player_tiles_right[0])  | S_FLIPX);
-		set_sprite_prop(player_tiles_right[1],get_sprite_prop(player_tiles_right[1])  | S_FLIPX);
-		set_sprite_prop(player_tiles_left[0],get_sprite_prop(player_tiles_left[0])  | S_FLIPX);
-		set_sprite_prop(player_tiles_left[1],get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
-		
-		if (!((joypad() & J_RIGHT))) {
-			playerFlipped = 1;
-		}
-		
-		move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
-		move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
-		move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
-		move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
-		
-		oldleft[0] = player_tiles_left[0];
-		oldleft[1] = player_tiles_left[1];
-		oldright[0] = player_tiles_right[0];
-		oldright[1] = player_tiles_right[1];
-		
-		playerWalking = 1;		
-		
-
-	}	
-	
-	// RIGHT
-	if ((joypad() & J_RIGHT) && !(joypad() & J_LEFT)) {
-		
-		
-		
-	
-		if (player_pos[0] != 90) {
-			player_pos[0]++;
-		}
-		if (player_pos[0] == 90) {
-			scroll_bkg(1,0);
-		}
-		
 			move_sprite(oldleft[0],200,200);
 			move_sprite(oldleft[1],200,200);
 			move_sprite(oldright[0],200,200);
 			move_sprite(oldright[1],200,200);
 			
-			set_sprite_prop(player_tiles_left[0],get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[0],get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_left[1],get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[1],get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
-			
-			if (!(joypad() & J_LEFT)) {
-				playerFlipped = 0;
+			if (playerFlipped == 0) {
+				move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
+				move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+				move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+				move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
+				
+				set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
+			}
+			if (playerFlipped == 1) {
+				move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
+				move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+				move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+				move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
+				
+				set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) | S_FLIPX);
+				set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
+				set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) | S_FLIPX);
+				set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) | S_FLIPX);
 			}
 			
-			move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
-			
-			move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
-			
-			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
-			
-			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
-				
 			
 			
 			oldleft[0] = player_tiles_left[0];
 			oldleft[1] = player_tiles_left[1];
-			
 			oldright[0] = player_tiles_right[0];
 			oldright[1] = player_tiles_right[1];
-
+			
 			playerWalking = 1;
+		}
+
+		// DOWN
+		if (joypad() & J_DOWN) {
+			
+			if (player_pos[1] != 134) {
+				player_pos[1]++;
+			}
+			if (player_pos[1] == 134) {
+				scroll_bkg(0,1);
+			}
+			
+			move_sprite(oldleft[0],200,200);
+			move_sprite(oldleft[1],200,200);
+			move_sprite(oldright[0],200,200);
+			move_sprite(oldright[1],200,200);
+			
+			if (playerFlipped == 0) {
+				move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
+				move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+				move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+				move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
+				
+				set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
+			}
+			if (playerFlipped == 1) {
+				move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
+				move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+				move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+				move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
+				
+				set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) | S_FLIPX);
+				set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
+				set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) | S_FLIPX);
+				set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) | S_FLIPX);
+			}
+			
+			
+			
+			oldleft[0] = player_tiles_left[0];
+			oldleft[1] = player_tiles_left[1];
+			oldright[0] = player_tiles_right[0];
+			oldright[1] = player_tiles_right[1];
+			
+			
+			playerWalking = 1;
+			
+		}
+
+		// LEFT
+		if (joypad() & J_LEFT)  {
+			
+			if (player_pos[0] != 70) {
+				player_pos[0]--;
+			}
+			if (player_pos[0] == 70) {
+				scroll_bkg(-1,0);
+			}
+			
+			
+
+			move_sprite(oldleft[0],200,200);
+			move_sprite(oldleft[1],200,200);
+			move_sprite(oldright[0],200,200);
+			move_sprite(oldright[1],200,200);
+			
+			set_sprite_prop(player_tiles_right[0],get_sprite_prop(player_tiles_right[0])  | S_FLIPX);
+			set_sprite_prop(player_tiles_right[1],get_sprite_prop(player_tiles_right[1])  | S_FLIPX);
+			set_sprite_prop(player_tiles_left[0],get_sprite_prop(player_tiles_left[0])  | S_FLIPX);
+			set_sprite_prop(player_tiles_left[1],get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
+			
+			if (!((joypad() & J_RIGHT))) {
+				playerFlipped = 1;
+			}
+			
+			move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
+			move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
+			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+			
+			oldleft[0] = player_tiles_left[0];
+			oldleft[1] = player_tiles_left[1];
+			oldright[0] = player_tiles_right[0];
+			oldright[1] = player_tiles_right[1];
+			
+			playerWalking = 1;		
+			
+
+		}	
 		
+		// RIGHT
+		if ((joypad() & J_RIGHT) && !(joypad() & J_LEFT)) {
+			
+			
+			
 		
-	}
+			if (player_pos[0] != 90) {
+				player_pos[0]++;
+			}
+			if (player_pos[0] == 90) {
+				scroll_bkg(1,0);
+			}
+			
+				move_sprite(oldleft[0],200,200);
+				move_sprite(oldleft[1],200,200);
+				move_sprite(oldright[0],200,200);
+				move_sprite(oldright[1],200,200);
+				
+				set_sprite_prop(player_tiles_left[0],get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[0],get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_left[1],get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[1],get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
+				
+				if (!(joypad() & J_LEFT)) {
+					playerFlipped = 0;
+				}
+				
+				move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
+				
+				move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
+				
+				move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+				
+				move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+					
+				
+				
+				oldleft[0] = player_tiles_left[0];
+				oldleft[1] = player_tiles_left[1];
+				
+				oldright[0] = player_tiles_right[0];
+				oldright[1] = player_tiles_right[1];
+
+				playerWalking = 1;
+			
+			
+		}
+	
 	
 	//NOT MOVING
 	if (!(joypad() & J_RIGHT) &&  !(joypad() & J_LEFT) && !(joypad() & J_UP) && !(joypad() & J_DOWN)) {
@@ -527,6 +584,9 @@ void checkInput() {
 	}
 	
 	
+	
+	}
+
 	
 	
 	
