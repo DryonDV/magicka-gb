@@ -81,6 +81,7 @@ UINT8 elements_mini_previous;
 UINT8 elements_mini_current_place;
 UINT8 elements_mini_current_palette;
 UINT8 elements_combo;
+UINT8 elements_5_has_changed;
 
 
 UWORD testworld_palette_bw[] = {
@@ -188,7 +189,19 @@ void timer_elementsmenu() {
 
 void elementsmenu_charge() {
 	
+	// if (elements_mini_current_place == 6) {
+		// if(elements_5_has_changed==0) {
+		// elements_5_has_changed=1;
+		// elements_mini_current_place=5;
+		// }
+	// }
+
+		
 	if((elements_mini_current==60 && elements_mini_previous==54) || (elements_mini_current==54 && elements_mini_previous==60)&& elements_mini_current_place <=5) {
+		if (elements_mini_current_place == 6&&elements_combo==0) {
+			elements_combo=1;
+			elements_mini_current_place--;
+		}	
 		set_sprite_tile(29,46);
 		set_sprite_tile(30,47);
 		set_sprite_tile(31,48);
@@ -199,13 +212,22 @@ void elementsmenu_charge() {
 		set_sprite_prop(32,0);
 		elements_mini_current=62;
 		elements_mini_current_palette=0;
-		elements_combo=1;
-		if(elements_mini_current_place !=1 && elements_mini_current_place != 6) {
+		
+		if(elements_mini_current_place !=1 && elements_mini_current_place != 6&&elements_combo==0 ) {
 		elements_mini_current_place--;
 		}
-		
+	
+			
 	}
-	if((elements_mini_current==56 && elements_mini_previous==54) || (elements_mini_current==54 && elements_mini_previous==56)&& elements_mini_current_place <=5) {
+
+
+	
+	
+	else if((elements_mini_current==56 && elements_mini_previous==54) || (elements_mini_current==54 && elements_mini_previous==56)&& elements_mini_current_place <=5) {
+		if (elements_mini_current_place == 6&&elements_combo==0) {
+			elements_combo=1;
+			elements_mini_current_place--;
+		}	
 		set_sprite_tile(29,50);
 		set_sprite_tile(30,51);
 		set_sprite_tile(31,52);
@@ -216,8 +238,9 @@ void elementsmenu_charge() {
 		set_sprite_prop(32,3);
 		elements_mini_current=61;
 		elements_mini_current_palette=3;
-		elements_combo=1;
-		if(elements_mini_current_place !=1&& elements_mini_current_place != 6) {
+		
+		
+		if(elements_mini_current_place !=1 && elements_mini_current_place != 6&&elements_combo==0 ) {
 		elements_mini_current_place--;
 		}
 		
@@ -255,7 +278,7 @@ void elementsmenu_charge() {
 	
 	elements_mini_previous = elements_mini_current;
 	
-	if (elements_mini_current_place < 6) {
+	if (elements_mini_current_place < 7) {
 	elements_mini_current_place++;
 	}
 	
