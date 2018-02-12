@@ -18,6 +18,7 @@
 #include "spritelist.c"
 #include "elements.c"
 #include "elements.h"
+#include "elements_select.c"
 
 
 void init();
@@ -31,6 +32,8 @@ void assigntilespalette();
 void isitloaded();
 void elementsmenu();
 void assigntiles();
+void timer_elementsmenu();
+void elementsmenu_charge();
 
 UINT8 player_pos[2];
 UINT8 player_tiles_left[2];
@@ -65,6 +68,18 @@ UINT8 elementsmenu_tiles_assigned;
 UINT8 magicka_player_tiles_assigned;
 UINT8 magicka_player_tiles_loaded;
 UINT8 elementsmenu_tiles_loaded;
+UINT8 timer_start;
+UINT16 timer_value;
+UINT8 enter_elementsmenu;
+UINT8 elements_mini1[2];
+UINT8 elements_mini2[2];
+UINT8 elements_mini3[2];
+UINT8 elements_mini4[2];
+UINT8 elements_mini5[2];
+UINT8 elements_mini_current;
+UINT8 elements_mini_current_place;
+UINT8 elements_mini_current_palette;
+
 
 UWORD testworld_palette_bw[] = {
 	//p0
@@ -150,7 +165,9 @@ void main() {
 		
 		updateSwitches();
 		checkInput();
+		timer_elementsmenu();
 		walkanim();
+		
 		// lifeposition();
 
 		wait_vbl_done();
@@ -160,6 +177,47 @@ void main() {
 	
 }
 
+
+void timer_elementsmenu() {
+	if (timer_start == 1) {
+		timer_value++;
+	}
+}
+
+void elementsmenu_charge() {
+		if (elements_mini_current_place == 1) {
+		set_sprite_tile(33,elements_mini_current);
+		set_sprite_prop(33,elements_mini_current_palette);
+		move_sprite(33,elements_mini1[0],elements_mini1[1]);
+		}
+		else if (elements_mini_current_place == 2) {
+		set_sprite_tile(34,elements_mini_current);
+		set_sprite_prop(34,elements_mini_current_palette);
+		move_sprite(34,elements_mini2[0],elements_mini2[1]);
+		}
+		else if (elements_mini_current_place == 3) {
+		set_sprite_tile(35,elements_mini_current);
+		set_sprite_prop(35,elements_mini_current_palette);
+		move_sprite(35,elements_mini3[0],elements_mini3[1]);
+		}
+		else if (elements_mini_current_place == 4) {
+		set_sprite_tile(36,elements_mini_current);
+		set_sprite_prop(36,elements_mini_current_palette);
+		move_sprite(36,elements_mini4[0],elements_mini4[1]);
+		}
+		else if (elements_mini_current_place == 5) {
+		set_sprite_tile(37,elements_mini_current);
+		set_sprite_prop(37,elements_mini_current_palette);
+		move_sprite(37,elements_mini5[0],elements_mini5[1]);
+		}
+		else if (elements_mini_current_place == 7) {
+			elements_mini_current_place = 6;
+		}
+		elements_mini_current_place++;
+}
+		
+
+	
 void isitloaded() {
 	if (spritenb == 0) {
 		magicka_player_loaded = 1;
@@ -239,10 +297,22 @@ void assigntilespalette() {
 		set_sprite_prop(26,7);
 		set_sprite_prop(27,7);
 		set_sprite_prop(28,0);
-		set_sprite_prop(29,0);
-		set_sprite_prop(30,0);
-		set_sprite_prop(31,0);
-		
+		// set_sprite_prop(29,0);
+		// set_sprite_prop(30,0);
+		// set_sprite_prop(31,0);
+		// set_sprite_prop(32,3);
+		// set_sprite_prop(33,3);
+		// set_sprite_prop(34,3);
+		// set_sprite_prop(35,3);
+		// set_sprite_prop(36,1);
+		// set_sprite_prop(37,2);
+		// set_sprite_prop(38,3);
+		// set_sprite_prop(39,4);
+		// set_sprite_prop(40,5);
+		// set_sprite_prop(41,6);
+		// set_sprite_prop(42,7);
+		// set_sprite_prop(43,3);
+		// set_sprite_prop(44,0);
 		}
 		
 }
@@ -332,11 +402,25 @@ void assigntiles() {
 }
 
 void init() {
+	elements_mini_current_place = 1;
+	elements_mini1[0]=64;
+	elements_mini1[1]=84;
+	elements_mini2[0]=74;
+	elements_mini2[1]=84;
+	elements_mini3[0]=84;
+	elements_mini3[1]=84;
+	elements_mini4[0]=94;
+	elements_mini4[1]=84;
+	elements_mini4[0]=94;
+	elements_mini4[1]=84;
+	elements_mini5[0]=104;
+	elements_mini5[1]=84;
+	
 	movelistorderstart = 0;
 	player_move_allowed = 1;
 	spriteorder = 0;
 	paletteorder = 0;
-	player_pos[0] = 30;
+	player_pos[0] = 80;
 	player_pos[1] = 50;
 	lifebar_pos[0] = 20;
 	lifebar_pos[1] = 20;
@@ -361,6 +445,7 @@ void init() {
 	
 	VBK_REG=1;
 	set_bkg_tiles(0,0,32,32,testworldpalettemap);
+	
 	VBK_REG=0;
 	set_bkg_tiles(0,0,32,32,testworldtilesmap);
 	
@@ -387,6 +472,7 @@ void updateSwitches() {
 }
 
 void elementsmenu() {
+	
 	
 	quitelementsmenu = 0;
 	
@@ -471,32 +557,336 @@ void elementsmenu() {
 	move_sprite(26,30,46);
 	move_sprite(27,38,46);
 	
-	//BOX
-	move_sprite(28,40,75);
-	move_sprite(29,40,83);
-	move_sprite(30,40,88);
-	
-	
 	
 	
 	while(quitelementsmenu == 0) {
-	checkInput();
-		if((joypad() & J_A)) {
+		
+		
+
+		checkInput();
+		
+		
+		if (enter_elementsmenu == 0) {
+			waitpadup();
+			enter_elementsmenu = 1;
+		}
+	
+		
+	
+		if(joypad() & J_UP) {
+			
+			timer_elementsmenu(timer_start=1);
+			if (joypad()&J_RIGHT && joypad()&J_UP && timer_value < 50) {
+				timer_start=0;
+				set_sprite_prop(29,2);
+				set_sprite_prop(30,2);
+				set_sprite_prop(31,2);
+				set_sprite_prop(32,2);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,22);
+				set_sprite_tile(30,23);
+				set_sprite_tile(31,24);
+				set_sprite_tile(32,25);
+				elements_mini_current = 55;
+				elements_mini_current_palette = 2;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				
+				timer_start = 0;
+				timer_value = 0;
+			}
+			else if (joypad()&J_UP && joypad()&J_LEFT && timer_value < 50) {
+				timer_start=0;
+				set_sprite_prop(29,7);
+				set_sprite_prop(30,7);
+				set_sprite_prop(31,7);
+				set_sprite_prop(32,7);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,42);
+				set_sprite_tile(30,43);
+				set_sprite_tile(31,44);
+				set_sprite_tile(32,45);
+				elements_mini_current = 60;
+				elements_mini_current_palette = 7;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				
+				timer_start = 0;
+				timer_value = 0;
+			}
+			
+			
+				
+			else if (timer_value > 50) {
+				timer_start = 0;
+				set_sprite_prop(29,1);
+				set_sprite_prop(30,1);
+				set_sprite_prop(31,1);
+				set_sprite_prop(32,1);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,18);
+				set_sprite_tile(30,19);
+				set_sprite_tile(31,20);
+				set_sprite_tile(32,21);
+				elements_mini_current = 54;
+				elements_mini_current_palette = 1;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			 }
+		}
+		
+		else if (joypad() & J_RIGHT) {
+			timer_elementsmenu(timer_start=1);
+			
+			if (joypad()&J_RIGHT && joypad()&J_UP && timer_value < 50) {
+				timer_start=0;
+				set_sprite_prop(29,2);
+				set_sprite_prop(30,2);
+				set_sprite_prop(31,2);
+				set_sprite_prop(32,2);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,22);
+				set_sprite_tile(30,23);
+				set_sprite_tile(31,24);
+				set_sprite_tile(32,25);
+				elements_mini_current = 55;
+				elements_mini_current_palette = 2;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			}
+			else if (joypad()&J_RIGHT && joypad()&J_DOWN && timer_value < 50) {
+				timer_start=0;
+				set_sprite_prop(29,4);
+				set_sprite_prop(30,4);
+				set_sprite_prop(31,4);
+				set_sprite_prop(32,4);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,30);
+				set_sprite_tile(30,31);
+				set_sprite_tile(31,32);
+				set_sprite_tile(32,33);
+				elements_mini_current = 57;
+				elements_mini_current_palette = 4;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			}
+				
+				
+			
+			else if (timer_value > 50) {
+				set_sprite_prop(29,3);
+				set_sprite_prop(30,3);
+				set_sprite_prop(31,3);
+				set_sprite_prop(32,3);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,26);
+				set_sprite_tile(30,27);
+				set_sprite_tile(31,28);
+				set_sprite_tile(32,29);
+				elements_mini_current = 56;
+				elements_mini_current_palette = 3;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			}
+		}
+		
+		if (joypad()&J_DOWN) {
+			timer_elementsmenu(timer_start=1);
+			
+			if (joypad()&J_DOWN && joypad()&J_RIGHT && timer_value < 50) {
+				timer_start=0;
+				set_sprite_prop(29,4);
+				set_sprite_prop(30,4);
+				set_sprite_prop(31,4);
+				set_sprite_prop(32,4);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,30);
+				set_sprite_tile(30,31);
+				set_sprite_tile(31,32);
+				set_sprite_tile(32,33);
+				elements_mini_current = 57;
+				elements_mini_current_palette = 4;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			}
+			
+			else if (joypad()&J_DOWN && joypad()&J_LEFT && timer_value < 50) {
+				timer_start=0;
+				set_sprite_prop(29,5);
+				set_sprite_prop(30,5);
+				set_sprite_prop(31,5);
+				set_sprite_prop(32,5);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,34);
+				set_sprite_tile(30,35);
+				set_sprite_tile(31,36);
+				set_sprite_tile(32,37);
+				elements_mini_current = 58;
+				elements_mini_current_palette = 5;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			}
+			
+			
+			
+			
+			else if (timer_value > 50) {
+
+			waitpadup();
+			timer_start = 0;
+			timer_value = 0;
+			}
+
+		}
+		
+		if(joypad()&J_LEFT){
+			timer_elementsmenu(timer_start=1);
+			
+				if (joypad()&J_LEFT && joypad()&J_DOWN && timer_value < 50) {
+				timer_start=0;
+				set_sprite_prop(29,5);
+				set_sprite_prop(30,5);
+				set_sprite_prop(31,5);
+				set_sprite_prop(32,5);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,34);
+				set_sprite_tile(30,35);
+				set_sprite_tile(31,36);
+				set_sprite_tile(32,37);
+				elements_mini_current = 58;
+				elements_mini_current_palette = 5;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			}
+			else if (joypad()&J_LEFT && joypad()&J_UP) {
+				timer_start=0;
+				set_sprite_prop(29,7);
+				set_sprite_prop(30,7);
+				set_sprite_prop(31,7);
+				set_sprite_prop(32,7);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,42);
+				set_sprite_tile(30,43);
+				set_sprite_tile(31,44);
+				set_sprite_tile(32,45);
+				elements_mini_current = 60;
+				elements_mini_current_palette = 7;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			}
+			
+			else if (timer_value > 50) {
+				timer_start = 0;
+				set_sprite_prop(29,6);
+				set_sprite_prop(30,6);
+				set_sprite_prop(31,6);
+				set_sprite_prop(32,6);
+				set_sprite_data(46,17,elements_select);
+				set_sprite_tile(29,38);
+				set_sprite_tile(30,39);
+				set_sprite_tile(31,40);
+				set_sprite_tile(32,41);
+				elements_mini_current = 59;
+				elements_mini_current_palette = 6;
+				elementsmenu_charge();
+				move_sprite(29,80,62);
+				move_sprite(30,88,62);
+				move_sprite(31,80,70);
+				move_sprite(32,88,70);
+				waitpadup();
+				timer_start = 0;
+				timer_value = 0;
+			 }
+		}
+		
+		else if(joypad()&J_SELECT) {
+			elements_mini_current_place = 1;
+			move_sprite(29,200,200);
+			move_sprite(30,200,200);
+			move_sprite(31,200,200);
+			move_sprite(32,200,200);
+			move_sprite(33,200,200);
+			move_sprite(34,200,200);
+			move_sprite(35,200,200);
+			move_sprite(36,200,200);
+			move_sprite(37,200,200);
+			
+		}
+	
+		if(joypad() & J_A) {
 			int u = movelistorderstart;
 			int i=0;
 			
 			player_move_allowed = 1;
 			set_bkg_palette(0,5,&testworld_palette[0]);
 			spritenb=2;
-			while (i<tilescount[spritenb]) {
+			while (i<40) {
 				
 				move_sprite(u,200,200);
 				i++;
 				u++;
 				
 			}
+			
 			quitelementsmenu = 1;
 			
+			elements_mini_current_place = 1;
 			paletteorder = 0;
 			assigntiles(spritenb=0);
 			assignpalette(spritenb=0);
@@ -504,6 +894,7 @@ void elementsmenu() {
 			elementsmenu_palette_loaded = 0;
 			player_pos[0] = recall_player_pos[0];
 			player_pos[1] = recall_player_pos[1];
+			enter_elementsmenu = 0;
 		}
 	}
 }

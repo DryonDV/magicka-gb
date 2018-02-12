@@ -14,7 +14,8 @@ const unsigned char *palettereference[] = {
 };
 
 const unsigned char tilescount[] = {
-	18,13,32
+	18,13,28
+	//elements: 28 basic, 16 select
 };
 
 const unsigned char palettecount[] = {
