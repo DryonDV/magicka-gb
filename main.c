@@ -34,6 +34,8 @@ void elementsmenu();
 void assigntiles();
 void timer_elementsmenu();
 void elementsmenu_charge();
+void elements_box_position();
+void elements_box_mini_palette();
 
 UINT8 player_pos[2];
 UINT8 player_tiles_left[2];
@@ -82,7 +84,28 @@ UINT8 elements_mini_current_place;
 UINT8 elements_mini_current_palette;
 UINT8 elements_combo;
 UINT8 elements_5_has_changed;
-
+UINT8 magicka_player_speed;
+UINT8 elements_box_mini1;
+UINT8 elements_box_mini2;
+UINT8 elements_box_mini3;
+UINT8 elements_box_mini4;
+UINT8 elements_box_mini5;
+UINT8 elements_box_mini1_palette;
+UINT8 elements_box_mini2_palette;
+UINT8 elements_box_mini3_palette;
+UINT8 elements_box_mini4_palette;
+UINT8 elements_box_mini5_palette;
+UINT8 elements_box_mini1_loaded;
+UINT8 elements_box_mini2_loaded;
+UINT8 elements_box_mini3_loaded;
+UINT8 elements_box_mini4_loaded;
+UINT8 elements_box_mini5_loaded;
+UINT8 elements_box_mini1_canmove;
+UINT8 elements_box_mini2_canmove;
+UINT8 elements_box_mini3_canmove;
+UINT8 elements_box_mini4_canmove;
+UINT8 elements_box_mini5_canmove;
+UINT8 elements_box_mini_current_palette;
 
 UWORD testworld_palette_bw[] = {
 	//p0
@@ -170,15 +193,137 @@ void main() {
 		checkInput();
 		timer_elementsmenu();
 		walkanim();
-		
+		elements_box_position();
 		// lifeposition();
-
+		// VBK_REG=1;
+		// set_bkg_tiles(0,0,32,32,testworldpalettemap);
+		
+		// VBK_REG=0;
+		// set_bkg_tiles(0,0,32,32,testworldtilesmap);
 		wait_vbl_done();
 		
 		// Game code here
 	}
 	
 }
+
+void elements_box_mini_palette() {
+	if(elements_box_mini1_loaded==1) {
+		if(elements_box_mini2_loaded==1) {
+			if(elements_box_mini3_loaded==1) {
+				if(elements_box_mini4_loaded==1) {
+					if(elements_box_mini5_loaded==1) {
+					}
+					else {
+						elements_box_mini5_palette=elements_box_mini_current_palette;
+					}
+				}
+				else {
+					elements_box_mini4_palette=elements_box_mini_current_palette;
+				}
+			
+			}
+			else { 
+				elements_box_mini3_palette=elements_box_mini_current_palette;
+			
+			}
+			
+		}
+		else {
+			elements_box_mini2_palette=elements_box_mini_current_palette;
+		}
+		
+	}
+	else if(elements_box_mini1_loaded==1) {
+		elements_box_mini1_palette=elements_box_mini_current_palette;
+	}
+		
+	
+}
+		
+	
+	
+
+void elements_box_position() {
+	
+		if (elements_box_mini1_loaded == 1) {
+			elements_box_mini1_loaded =0;
+			elements_box_mini1_canmove=1;
+			set_sprite_tile(18,elements_box_mini1);
+			set_sprite_palette(3,1,&elements_palette[elements_box_mini1_palette]);
+			set_sprite_prop(18,3);
+		
+		}
+		else if (elements_box_mini2_loaded == 1) {
+			elements_box_mini2_loaded =0;
+			elements_box_mini2_canmove=1;
+			set_sprite_tile(19,elements_box_mini2);
+			set_sprite_palette(4,1,&elements_palette[elements_box_mini2_palette]);
+			set_sprite_prop(19,4);
+			
+		}
+		else if (elements_box_mini3_loaded == 1) {
+			elements_box_mini3_loaded =0;
+			elements_box_mini3_canmove=1;
+			set_sprite_tile(20,elements_box_mini3);
+			set_sprite_palette(5,1,&elements_palette[elements_box_mini3_palette]);
+			set_sprite_prop(20,5);
+			
+		}
+			else if (elements_box_mini4_loaded == 1) {
+			elements_box_mini4_loaded =0;
+			elements_box_mini4_canmove=1;
+			set_sprite_tile(21,elements_box_mini4);
+			set_sprite_palette(6,1,&elements_palette[elements_box_mini4_palette]);
+			set_sprite_prop(21,6);
+			
+		}
+			else if (elements_box_mini5_loaded == 1) {
+			elements_box_mini5_loaded =0;
+			elements_box_mini5_canmove=1;
+			set_sprite_tile(22,elements_box_mini5);
+			set_sprite_palette(7,1,&elements_palette[elements_box_mini5_palette]);
+			set_sprite_prop(22,7);
+			
+		}
+	
+	if(playerFlipped ==0) {	
+		if(elements_box_mini1_canmove==1) {
+		move_sprite(18,player_pos[0]-16,player_pos[1]+18);
+			if(elements_box_mini2_canmove==1) {
+				move_sprite(19,player_pos[0]-7,player_pos[1]+18);
+				if(elements_box_mini3_canmove==1) {
+					move_sprite(20,player_pos[0]+2,player_pos[1]+18);
+					if(elements_box_mini4_canmove==1) {
+						move_sprite(21,player_pos[0]+11,player_pos[1]+18);
+						
+						if(elements_box_mini5_canmove==1) {
+							move_sprite(22,player_pos[0]+20,player_pos[1]+18);
+						}
+					}
+				}
+			}	
+		}
+	}
+	if(playerFlipped ==1) {	
+		if(elements_box_mini1_canmove==1) {
+			move_sprite(18,player_pos[0]-20,player_pos[1]+18);
+			if(elements_box_mini2_canmove==1) {
+				move_sprite(19,player_pos[0]-11,player_pos[1]+18);
+				if(elements_box_mini3_canmove==1) {
+					move_sprite(20,player_pos[0]-2,player_pos[1]+18);
+					if(elements_box_mini4_canmove==1) {
+						move_sprite(21,player_pos[0]+7,player_pos[1]+18);
+						if((elements_box_mini5_canmove==1)&&(elements_box_mini5_loaded==0)) {
+							move_sprite(22,player_pos[0]+16,player_pos[1]+18);
+						}
+					}
+				}
+			}	
+		}
+	}
+}
+	
 
 
 void timer_elementsmenu() {
@@ -212,6 +357,7 @@ void elementsmenu_charge() {
 		set_sprite_prop(32,0);
 		elements_mini_current=62;
 		elements_mini_current_palette=0;
+		elements_box_mini_current_palette =0;
 		
 		if(elements_mini_current_place !=1 && elements_mini_current_place != 6&&elements_combo==0 ) {
 		elements_mini_current_place--;
@@ -238,6 +384,7 @@ void elementsmenu_charge() {
 		set_sprite_prop(32,3);
 		elements_mini_current=61;
 		elements_mini_current_palette=3;
+		elements_box_mini_current_palette =12;
 		
 		
 		if(elements_mini_current_place !=1 && elements_mini_current_place != 6&&elements_combo==0 ) {
@@ -250,29 +397,48 @@ void elementsmenu_charge() {
 	
 	
 	if (elements_mini_current_place == 1) {
-	set_sprite_tile(33,elements_mini_current);
-	set_sprite_prop(33,elements_mini_current_palette);
-	move_sprite(33,elements_mini1[0],elements_mini1[1]);
+		set_sprite_tile(33,elements_mini_current);
+		set_sprite_prop(33,elements_mini_current_palette);
+		move_sprite(33,elements_mini1[0],elements_mini1[1]);
+		elements_box_mini1 = elements_mini_current;
+		elements_box_mini1_palette = elements_box_mini_current_palette;
+		elements_box_mini1_loaded =1;
 	}
+	
 	else if (elements_mini_current_place == 2) {
-	set_sprite_tile(34,elements_mini_current);
-	set_sprite_prop(34,elements_mini_current_palette);
-	move_sprite(34,elements_mini2[0],elements_mini2[1]);
+		set_sprite_tile(34,elements_mini_current);
+		set_sprite_prop(34,elements_mini_current_palette);
+		move_sprite(34,elements_mini2[0],elements_mini2[1]);
+		elements_box_mini2 = elements_mini_current;
+		elements_box_mini2_palette = elements_box_mini_current_palette;
+		elements_box_mini2_loaded =1;
 	}
+	
 	else if (elements_mini_current_place == 3) {
-	set_sprite_tile(35,elements_mini_current);
-	set_sprite_prop(35,elements_mini_current_palette);
-	move_sprite(35,elements_mini3[0],elements_mini3[1]);
+		set_sprite_tile(35,elements_mini_current);
+		set_sprite_prop(35,elements_mini_current_palette);
+		move_sprite(35,elements_mini3[0],elements_mini3[1]);
+		elements_box_mini3 = elements_mini_current;
+		elements_box_mini3_palette = elements_box_mini_current_palette;
+		elements_box_mini3_loaded =1;
 	}
+	
 	else if (elements_mini_current_place == 4) {
-	set_sprite_tile(36,elements_mini_current);
-	set_sprite_prop(36,elements_mini_current_palette);
-	move_sprite(36,elements_mini4[0],elements_mini4[1]);
+		set_sprite_tile(36,elements_mini_current);
+		set_sprite_prop(36,elements_mini_current_palette);
+		move_sprite(36,elements_mini4[0],elements_mini4[1]);
+		elements_box_mini4 = elements_mini_current;
+		elements_box_mini4_palette = elements_box_mini_current_palette;
+		elements_box_mini4_loaded =1;
 	}
+	
 	else if (elements_mini_current_place == 5) {
-	set_sprite_tile(37,elements_mini_current);
-	set_sprite_prop(37,elements_mini_current_palette);
-	move_sprite(37,elements_mini5[0],elements_mini5[1]);
+		set_sprite_tile(37,elements_mini_current);
+		set_sprite_prop(37,elements_mini_current_palette);
+		move_sprite(37,elements_mini5[0],elements_mini5[1]);
+		elements_box_mini5 = elements_mini_current;
+		elements_box_mini5_palette = elements_box_mini_current_palette;
+		elements_box_mini5_loaded =1;
 	}
 
 	
@@ -283,6 +449,8 @@ void elementsmenu_charge() {
 	}
 	
 	elements_combo=0;
+	elements_box_mini_palette();
+	
 
 }
 		
@@ -472,6 +640,7 @@ void assigntiles() {
 }
 
 void init() {
+	quitelementsmenu = 1;
 	elements_mini_current_place = 1;
 	elements_mini1[0]=64;
 	elements_mini1[1]=84;
@@ -485,7 +654,7 @@ void init() {
 	elements_mini4[1]=84;
 	elements_mini5[0]=104;
 	elements_mini5[1]=84;
-	
+	magicka_player_speed=1;
 	movelistorderstart = 0;
 	player_move_allowed = 1;
 	spriteorder = 0;
@@ -545,6 +714,17 @@ void elementsmenu() {
 	
 	
 	quitelementsmenu = 0;
+	
+	elements_box_mini1_loaded=0;
+	elements_box_mini2_loaded=0;
+	elements_box_mini3_loaded=0;
+	elements_box_mini4_loaded=0;
+	elements_box_mini5_loaded=0;
+	elements_box_mini1_canmove=0;
+	elements_box_mini2_canmove=0;
+	elements_box_mini3_canmove=0;
+	elements_box_mini4_canmove=0;
+	elements_box_mini5_canmove=0;
 	
 	recall_player_pos[0] = player_pos[0];
 	recall_player_pos[1] = player_pos[1];
@@ -659,6 +839,7 @@ void elementsmenu() {
 				set_sprite_tile(32,25);
 				elements_mini_current = 55;
 				elements_mini_current_palette = 2;
+				elements_box_mini_current_palette =8;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -682,6 +863,7 @@ void elementsmenu() {
 				set_sprite_tile(32,45);
 				elements_mini_current = 60;
 				elements_mini_current_palette = 7;
+				elements_box_mini_current_palette =28;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -708,6 +890,7 @@ void elementsmenu() {
 				set_sprite_tile(32,21);
 				elements_mini_current = 54;
 				elements_mini_current_palette = 1;
+				elements_box_mini_current_palette =4;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -735,6 +918,8 @@ void elementsmenu() {
 				set_sprite_tile(32,25);
 				elements_mini_current = 55;
 				elements_mini_current_palette = 2;
+				elements_box_mini_current_palette =8;
+				
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -757,6 +942,7 @@ void elementsmenu() {
 				set_sprite_tile(32,33);
 				elements_mini_current = 57;
 				elements_mini_current_palette = 4;
+				elements_box_mini_current_palette =16;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -781,6 +967,7 @@ void elementsmenu() {
 				set_sprite_tile(32,29);
 				elements_mini_current = 56;
 				elements_mini_current_palette = 3;
+				elements_box_mini_current_palette =12;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -808,6 +995,7 @@ void elementsmenu() {
 				set_sprite_tile(32,33);
 				elements_mini_current = 57;
 				elements_mini_current_palette = 4;
+				elements_box_mini_current_palette = 16;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -831,6 +1019,7 @@ void elementsmenu() {
 				set_sprite_tile(32,37);
 				elements_mini_current = 58;
 				elements_mini_current_palette = 5;
+				elements_box_mini_current_palette =20;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -869,6 +1058,8 @@ void elementsmenu() {
 				set_sprite_tile(32,37);
 				elements_mini_current = 58;
 				elements_mini_current_palette = 5;
+				elements_box_mini_current_palette =20;
+				elements_box_mini_current_palette =20;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -891,6 +1082,7 @@ void elementsmenu() {
 				set_sprite_tile(32,45);
 				elements_mini_current = 60;
 				elements_mini_current_palette = 7;
+				elements_box_mini_current_palette =28;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -914,6 +1106,7 @@ void elementsmenu() {
 				set_sprite_tile(32,41);
 				elements_mini_current = 59;
 				elements_mini_current_palette = 6;
+				elements_box_mini_current_palette =24;
 				elementsmenu_charge();
 				move_sprite(29,80,62);
 				move_sprite(30,88,62);
@@ -927,6 +1120,7 @@ void elementsmenu() {
 		
 		else if(joypad()&J_SELECT) {
 			elements_mini_current_place = 1;
+			elements_box_mini1_loaded = 1;
 			elements_combo=0;
 			elements_mini_previous=0;
 			move_sprite(29,200,200);
@@ -945,6 +1139,7 @@ void elementsmenu() {
 			int u = movelistorderstart;
 			int i=0;
 			
+			waitpadup();
 			player_move_allowed = 1;
 			set_bkg_palette(0,5,&testworld_palette[0]);
 			spritenb=2;
@@ -967,6 +1162,7 @@ void elementsmenu() {
 			player_pos[0] = recall_player_pos[0];
 			player_pos[1] = recall_player_pos[1];
 			enter_elementsmenu = 0;
+			
 		}
 	}
 }
@@ -1057,7 +1253,8 @@ void checkInput() {
 			
 			
 			if (player_pos[1] == 30) {
-				scroll_bkg(0,-1);
+				// scroll_bkg(0,-1);
+				player_pos[1]=30;
 			}
 			
 			if (player_pos[1] != 30) {
@@ -1110,7 +1307,7 @@ void checkInput() {
 				player_pos[1]++;
 			}
 			if (player_pos[1] == 134) {
-				scroll_bkg(0,1);
+				player_pos[1] = 134;
 			}
 			
 			move_sprite(oldleft[0],200,200);
@@ -1201,9 +1398,11 @@ void checkInput() {
 			
 		
 			if (player_pos[0] != 90) {
-				player_pos[0]++;
+				player_pos[0]=player_pos[0]+magicka_player_speed;
+		
 			}
-			if (player_pos[0] == 90) {
+			if (player_pos[0] >= 90) {
+				player_pos[0] = 90;
 				scroll_bkg(1,0);
 			}
 			
@@ -1243,50 +1442,67 @@ void checkInput() {
 		}
 	
 	
-	//NOT MOVING
-	if (!(joypad() & J_RIGHT) &&  !(joypad() & J_LEFT) && !(joypad() & J_UP) && !(joypad() & J_DOWN)) {
-		
-		
-		
-		move_sprite(oldleft[0],200,200);
-		move_sprite(oldleft[1],200,200);
-		move_sprite(oldright[0],200,200);
-		move_sprite(oldright[1],200,200);
-		
-		if (playerFlipped == 0) {
-			move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
+		//NOT MOVING
+		if (!(joypad() & J_RIGHT) &&  !(joypad() & J_LEFT) && !(joypad() & J_UP) && !(joypad() & J_DOWN)) {
 			
-			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
 			
-			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
 			
-			move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
+			move_sprite(oldleft[0],200,200);
+			move_sprite(oldleft[1],200,200);
+			move_sprite(oldright[0],200,200);
+			move_sprite(oldright[1],200,200);
 			
-			set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
-			set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
+			if (playerFlipped == 0) {
+				move_sprite(player_tiles_right[0], player_pos[0]+8, player_pos[1]);
+				
+				move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+				
+				move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+				
+				move_sprite(player_tiles_right[1],player_pos[0]+8,player_pos[1]+8);
+				
+				set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) & ~S_FLIPX);
+				set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) & ~S_FLIPX);
+			}
+			
+			if (playerFlipped == 1) {
+				move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
+				move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
+				move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
+				move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
+				
+				set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) | S_FLIPX);
+				set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
+				set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) | S_FLIPX);
+				set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) | S_FLIPX);
+			}
+			
+			oldleft[0] = player_tiles_left[0];
+			oldleft[1] = player_tiles_left[1];
+			
+			oldright[0] = player_tiles_right[0];
+			oldright[1] = player_tiles_right[1];
+			playerWalking = 0;
 		}
-		
-		if (playerFlipped == 1) {
-			move_sprite(player_tiles_right[0], player_pos[0]-8, player_pos[1]);
-			move_sprite(player_tiles_left[0],player_pos[0],player_pos[1]);
-			move_sprite(player_tiles_left[1],player_pos[0],player_pos[1]+8);
-			move_sprite(player_tiles_right[1], player_pos[0]-8, player_pos[1]+8);
+	
+		//SELECT
+		if (joypad()&J_SELECT) {
+			move_sprite(18,200,200);
+			move_sprite(19,200,200);
+			move_sprite(20,200,200);
+			move_sprite(21,200,200);
+			move_sprite(22,200,200);
+			elements_mini_previous=0;
+			elements_box_mini1_loaded=0;
+			elements_box_mini1_canmove=0;
+			elements_box_mini2_canmove=0;
+			elements_box_mini3_canmove=0;
+			elements_box_mini4_canmove=0;
+			elements_box_mini5_canmove=0;
 			
-			set_sprite_prop(player_tiles_left[0], get_sprite_prop(player_tiles_left[0]) | S_FLIPX);
-			set_sprite_prop(player_tiles_left[1], get_sprite_prop(player_tiles_left[1]) | S_FLIPX);
-			set_sprite_prop(player_tiles_right[0], get_sprite_prop(player_tiles_right[0]) | S_FLIPX);
-			set_sprite_prop(player_tiles_right[1], get_sprite_prop(player_tiles_right[1]) | S_FLIPX);
 		}
-		
-		oldleft[0] = player_tiles_left[0];
-		oldleft[1] = player_tiles_left[1];
-		
-		oldright[0] = player_tiles_right[0];
-		oldright[1] = player_tiles_right[1];
-		playerWalking = 0;
-	}
 	
 	
 	
